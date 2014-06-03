@@ -31,7 +31,7 @@ public class LauncherDownloader {
 	 */
 	private String getLauncherUpdateUrl() {
 		//TODO should use own launcher (or prompt user for URL)
-		return "http://oxguy3.github.io/craftboot-files/launcher/latest";
+		return "http://sylphid.ca/launcher/latest";
 	}
 	
 	/**

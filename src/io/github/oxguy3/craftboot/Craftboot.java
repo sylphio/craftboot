@@ -26,6 +26,7 @@ import java.io.PrintStream;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
+import java.net.ProxySelector;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
@@ -33,6 +34,8 @@ import java.util.ArrayList;
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
+import com.btr.proxy.search.*;
+
 
 import lombok.Getter;
 import lombok.extern.java.Log;
@@ -43,10 +46,8 @@ public class Craftboot {
 	@Getter private static File dataDir;
 	
 	static final String LAUNCHER_CLASS_NAME = "com.skcraft.launcher.Launcher";
-	static final String LAUNCHER_SUBDIR = ".craftboot";
-	static final String URL_DIALOG_TEXT = "Welcome to CraftBoot! Please enter a launcher configuration URL."
-			+ "\n(if you already completed this previously, make sure that you didn't rename your launcher)";
-	
+	static final String LAUNCHER_SUBDIR = ".SebCynModPack";
+
 	/**
 	 * Does most of the everything
 	 * 
@@ -57,7 +58,11 @@ public class Craftboot {
 		dataDir = makeDataDir();
 		File launcherDir = new File(dataDir, "launcher");
 		launcherDir.mkdir();
-		
+
+        ProxySearch proxySearch = ProxySearch.getDefaultProxySearch();
+        ProxySelector myProxySelector = proxySearch.getProxySelector();
+        ProxySelector.setDefault(myProxySelector);
+
 		File[] launcherPacks = launcherDir.listFiles();
 		if (launcherPacks == null || launcherPacks.length == 0) {
 			boolean didDownload = new LauncherDownloader().downloadLauncher();
@@ -156,41 +161,7 @@ public class Craftboot {
 	 */
 	public static void prepareUserUrl() {
 		File launcherProperties = new File(dataDir, "launcher.properties");
-		File craftbootUrl = new File(dataDir, ".craftbooturl");
-		String propertiesUrl = "";
-		
-		// get the properties URL from the file if it exists
-		if (craftbootUrl.exists()) {
-			propertiesUrl = CraftbootUtils.getTextFromFile(craftbootUrl);
-			if (propertiesUrl == null) {
-				log.warning("Could not read URL from file, will prompt user to re-enter URL");
-			}
-		}
-		
-		// if the launcher.properties file doesn't or properties URL file didn't exist, prompt
-		// the user for a launcher.properties URL
-		if (!launcherProperties.exists() || propertiesUrl == null) {
-			propertiesUrl = (propertiesUrl == null) ? "" : propertiesUrl;
-			while (propertiesUrl == "") {
-				
-				propertiesUrl = JOptionPane.showInputDialog(URL_DIALOG_TEXT);
-			}
-			if (propertiesUrl == null) {
-				log.info("User canceled setup, shutting down...");
-				System.exit(0);
-				return;
-			}
-			
-			// save the url to a file
-			PrintStream out;
-			try {
-				out = new PrintStream(new FileOutputStream(craftbootUrl));
-				out.print(propertiesUrl);
-				out.close();
-			} catch (FileNotFoundException e) {
-				e.printStackTrace();
-			}
-		}
+		String propertiesUrl = "http://sylphid.ca/launcher/launcher.properties";
 		
 		if (!CraftbootUtils.downloadToFile(propertiesUrl, launcherProperties)) {
 			log.warning("Failed to download launcher.properties, default version will likely be used");
@@ -218,10 +189,8 @@ public class Craftboot {
 	public static File makeDataDir() {
 		File homeDir = new File(System.getProperty("user.home"));
 		File craftbootDir = new File(homeDir, LAUNCHER_SUBDIR);
-		String launcherFilename = new File(Craftboot.class.getProtectionDomain().getCodeSource().getLocation().getFile()).getName();
-		File instanceDir = new File(craftbootDir, launcherFilename);
-		instanceDir.mkdirs();
-		return instanceDir;
+        craftbootDir.mkdirs();
+		return craftbootDir;
 	}
 	
 	/**

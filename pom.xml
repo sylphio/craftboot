@@ -1,9 +1,9 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>io.github.oxguy3</groupId>
-  <artifactId>craftboot</artifactId>
-  <version>1.0.1</version>
-  <name>CraftBoot</name>
+  <artifactId>SebCynCraft</artifactId>
+  <version>1.1</version>
+  <name>SebCynCraft</name>
   <description>An open bootstrapper for a Minecraft modpack launcher, built on SKCraft Launcher</description>
   <build>
     <sourceDirectory>src</sourceDirectory>
@@ -55,13 +55,46 @@
           <minimizeJar>false</minimizeJar>
         </configuration>
       </plugin>
-    </plugins>
+      <plugin>
+        <groupId>com.googlecode.addjars-maven-plugin</groupId>
+        <artifactId>addjars-maven-plugin</artifactId>
+        <version>1.0.5</version>
+        <executions>
+            <execution>
+                <goals>
+                    <goal>add-jars</goal>
+                </goals>
+                <configuration>
+                    <resources>
+                        <resource>
+                            <directory>${basedir}/lib</directory>
+                        </resource>
+                    </resources>
+                </configuration>
+            </execution>
+        </executions>
+      </plugin>
+    </plugins>  
   </build>
   <dependencies>
   	<dependency>
   		<groupId>org.projectlombok</groupId>
   		<artifactId>lombok</artifactId>
   		<version>1.12.2</version>
+  	</dependency>
+    <dependency>
+  		<groupId>com.btr.proxy</groupId>
+  		<artifactId>project-vole</artifactId>
+  		<version>1.0.0</version>
+      <scope>system</scope>
+      <systemPath>${project.basedir}/lib/proxy-vole_20131209.jar</systemPath>
+  	</dependency>
+  	<dependency>
+  		<groupId>com.btr.javascript</groupId>
+  		<artifactId>project-vole-javascript</artifactId>
+  		<version>1.0.0</version>
+      <scope>system</scope>
+      <systemPath>${project.basedir}/lib/js.jar</systemPath>
   	</dependency>
   </dependencies>
 </project>
